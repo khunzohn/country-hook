@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const baseUrl = "https://restcountries.eu/rest/v2/name/"
+
 const useField = (type) => {
   const [value, setValue] = useState('')
 
@@ -18,12 +20,31 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
-  useEffect()
+  useEffect(() => {
+    async function fetch() {
+      const response = await axios.get(`${baseUrl}${name}`)
+      console.log('response',response.data)
+      if(response.data && response.data.length > 0) {
+        setCountry({
+          data: response.data[0],
+          found: true
+        })
+      } else {
+        setCountry({
+          data: null,
+          found: false
+        })
+      }
+    }
+
+    fetch()
+  },[name])
 
   return country
 }
 
 const Country = ({ country }) => {
+  console.log('country', country)
   if (!country) {
     return null
   }
